@@ -16,19 +16,35 @@ export default function App(){
   const [entertainment, setEntertainment] = useState(0);
   const [debts, setDebts] = useState(0);
   const [otherExpenses, setOtherExpenses] = useState(0);
-// const [spending, setSpending] = useState("")
-//   const [spendings, setSpendings] = useState(
-//     JSON.parse(localStorage.getItem("spending"))||[]
-//   );
+const [spending, setSpending] = useState("")
+  const [spendings, setSpendings] = useState(
+    JSON.parse(localStorage.getItem("spending"))||[]
+  );
 const totalIncome =Number(basicSalary)+Number(bonuses)+ Number(commission) + Number(collectedDebt) + Number(otherIncome);
 const totalExpenses=Number(rent)+Number(groceries)+Number(transport)+Number(entertainment)+Number(debts)+Number(otherExpenses);
 const remaining = totalIncome - totalExpenses
 
+const newIncome =()=>{
+    if(spending===""){
+        return
+    }
+    const addIncome={
+month:month,
+totalIncome:totalIncome,
+totalExpenses:totalExpenses,
+remaining:remaining,
+spending:spending
+
+}
+const addedIncome =[...spendings, addIncome]
+setSpendings(addedIncome)
+localStorage.setItem("spending", JSON.stringify(addedIncome))
+}
 
 return(
   <>
   <h1>Enter your details below</h1>
-  <form className="finances">
+  <form className="finances" onSubmit={newIncome}>
 
     <label>Select a month</label>
   <select value={month} onChange={(e)=>setMonth(e.target.value)}>
@@ -151,6 +167,30 @@ onChange ={(e)=>setOtherExpenses(e.target.value)}
 required
     />
   </fieldset>
+  <table>
+    <thead>
+        <tr>
+            <td>Month</td>
+             <td>Total Income</td>
+              <td>Total Expenses</td>
+               <td>Remaining</td>
+                <td>Spent on what</td>
+        </tr>
+    </thead>
+    <tbody>
+        {spendings.map((item, index)=>(
+            <tr key={index}>
+                <td>{item.month}</td>
+                <td>{item.totalIncome}</td>
+                <td>{item.totalExpenses}</td>
+                <td>{item.remaining}</td>
+                <td>{item.spending}</td>
+            </tr>
+        )
+    )}
+    </tbody>
+  </table>
+  <button>Add to Budget</button>
   </form>
   </>
 )
